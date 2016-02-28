@@ -94,11 +94,11 @@ public class JdbcDerbyDAO extends JdbcBaseDAO {
         // boolean tableExists = Yank.queryScalar(SQL_IF_TABLE_EXISTS.replace("#searchTable#",
         // vo.getItemsManageTable().toUpperCase()), String.class, null) == null;
         boolean tableExists = doIfTableExists(vo);
-        if (tableExists) {
+        if (!tableExists) {
             String sql = StringUtilsExt.replaceArrayMerge(SQL_CREATE_ITEMS_TABLE_IF_NOT,
                     new String[] { "#itemsManageTable#", "#colname#", "#coltype#" },
                     new String[] { vo.getItemsManageTable().toUpperCase(), vo.getColname(), vo.getColtype() });
-            logger.debug("JDBC::doCreateItemsTableIfNot tableExists={} therefore sql={}", sql);
+            logger.debug("JDBC::doCreateItemsTableIfNot tableExists={} therefore sql='{}'", tableExists, sql);
             Yank.execute(sql, null);
         } else {
             logger.debug("JDBC::doCreateItemsTableIfNot tableExists={}, did no CREATE TABLE", tableExists);
