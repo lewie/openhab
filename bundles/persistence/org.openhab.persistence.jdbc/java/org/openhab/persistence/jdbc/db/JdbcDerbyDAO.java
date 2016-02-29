@@ -94,11 +94,11 @@ public class JdbcDerbyDAO extends JdbcBaseDAO {
         // boolean tableExists = Yank.queryScalar(SQL_IF_TABLE_EXISTS.replace("#searchTable#",
         // vo.getItemsManageTable().toUpperCase()), String.class, null) == null;
         boolean tableExists = doIfTableExists(vo);
-        if (tableExists) {
+        if (!tableExists) {
             String sql = StringUtilsExt.replaceArrayMerge(SQL_CREATE_ITEMS_TABLE_IF_NOT,
                     new String[] { "#itemsManageTable#", "#colname#", "#coltype#" },
                     new String[] { vo.getItemsManageTable().toUpperCase(), vo.getColname(), vo.getColtype() });
-            logger.debug("JDBC::doCreateItemsTableIfNot tableExists={} therefore sql={}", sql);
+            logger.debug("JDBC::doCreateItemsTableIfNot tableExists={} therefore sql='{}'", tableExists, sql);
             Yank.execute(sql, null);
         } else {
             logger.debug("JDBC::doCreateItemsTableIfNot tableExists={}, did no CREATE TABLE", tableExists);
@@ -194,7 +194,7 @@ public class JdbcDerbyDAO extends JdbcBaseDAO {
             queryString += "5 AS DECIMAL(31," + numberDecimalcount + "))"; // 31 is DECIMAL max precision
                                                                            // https://db.apache.org/derby/docs/10.0/manuals/develop/develop151.html
         } else {
-            queryString += "SELECT time, value FROM " + table;
+            queryString += " value FROM " + table;
         }
 
         if (!filterString.isEmpty()) {
